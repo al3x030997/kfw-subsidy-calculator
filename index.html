@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KFW Förderrechner — Enpal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <span class="logo-text">Enpal</span><span class="logo-dot">.</span>
+      </div>
+    </header>
+
+    <main class="main">
+      <h1>KFW Förderrechner</h1>
+      <p class="subtitle">Berechnen Sie die KFW-Förderung für Ihren Kunden.</p>
+
+      <form id="foerder-form" class="form-card" autocomplete="off">
+        <div class="form-group">
+          <label for="preis">Preis (Brutto)</label>
+          <div class="input-with-unit">
+            <input type="number" id="preis" min="0" step="100" placeholder="z.B. 30000" required>
+            <span class="unit">€</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="wohneinheiten">Anzahl Wohneinheiten</label>
+          <input type="number" id="wohneinheiten" min="1" value="1" required>
+        </div>
+
+        <div class="form-row">
+          <div class="toggle-group">
+            <label>Selbstnutzender Eigentümer</label>
+            <div class="toggle-wrapper">
+              <button type="button" class="toggle-btn active" data-field="eigentuemer" data-value="ja">Ja</button>
+              <button type="button" class="toggle-btn" data-field="eigentuemer" data-value="nein">Nein</button>
+            </div>
+          </div>
+
+          <div class="toggle-group">
+            <label>Haus älter als 5 Jahre</label>
+            <div class="toggle-wrapper">
+              <button type="button" class="toggle-btn active" data-field="haus-alt" data-value="ja">Ja</button>
+              <button type="button" class="toggle-btn" data-field="haus-alt" data-value="nein">Nein</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="heizungstyp">Heizungstyp</label>
+          <select id="heizungstyp" required>
+            <option value="">Bitte wählen</option>
+            <option value="oel">Öl</option>
+            <option value="gas">Gas</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="toggle-group">
+            <label>Heizung älter als 20 Jahre</label>
+            <div class="toggle-wrapper">
+              <button type="button" class="toggle-btn active" data-field="heizung-alt" data-value="ja">Ja</button>
+              <button type="button" class="toggle-btn" data-field="heizung-alt" data-value="nein">Nein</button>
+            </div>
+          </div>
+
+          <div class="toggle-group">
+            <label>Haushaltseinkommen unter 40.000 €</label>
+            <div class="toggle-wrapper">
+              <button type="button" class="toggle-btn" data-field="einkommen-unter-40k" data-value="ja">Ja</button>
+              <button type="button" class="toggle-btn active" data-field="einkommen-unter-40k" data-value="nein">Nein</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-berechnen">Förderung berechnen</button>
+      </form>
+
+      <div id="ergebnis" class="ergebnis-card hidden">
+        <h2>Ihr Förderergebnis</h2>
+        <div class="ergebnis-grid">
+          <div class="ergebnis-item highlight">
+            <span class="ergebnis-label">Fördersumme</span>
+            <span class="ergebnis-value" id="foerdersumme">—</span>
+          </div>
+          <div class="ergebnis-item">
+            <span class="ergebnis-label">Fördersatz</span>
+            <span class="ergebnis-value" id="foerdersatz">—</span>
+          </div>
+          <div class="ergebnis-item highlight">
+            <span class="ergebnis-label">Preis nach Förderung</span>
+            <span class="ergebnis-value" id="preis-nach-foerderung">—</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>Internes Tool — Enpal GmbH</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
