@@ -224,9 +224,6 @@ select {
   animation: slideIn 0.3s ease-out;
 }
 
-.ergebnis-card.hidden {
-  display: none;
-}
 
 .ergebnis-card h2 {
   font-size: 18px;
@@ -234,40 +231,120 @@ select {
   margin-bottom: 16px;
 }
 
-.ergebnis-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+/* === Ergebnis Spaltenansicht === */
+.ergebnis-columns {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
 }
 
-.ergebnis-item {
-  padding: 16px;
-  background: var(--enpal-light-bg);
+.col-pct {
+  flex: 1;
+  min-width: 0;
+  padding-right: 20px;
+}
+
+.col-eur {
+  flex: 1;
+  min-width: 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--enpal-gray);
+}
+
+/* Spalten-Header */
+.col-header {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--enpal-text-light);
+  margin-bottom: 10px;
+}
+
+/* === Linke Spalte: Fördersätze % === */
+
+.rate-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--enpal-gray);
+  gap: 12px;
+}
+
+.rate-row:last-child {
+  border-bottom: none;
+}
+
+.rate-label {
+  font-size: 13px;
+  color: var(--enpal-text-light);
+  line-height: 1.3;
+}
+
+.rate-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--enpal-dark);
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* Horizontaler Trenner innerhalb linker Spalte */
+.col-divider {
+  height: 2px;
+  background: var(--enpal-gray);
+  margin: 8px 0;
+  border-radius: 2px;
+}
+
+/* Effektiver Fördersatz — fett hervorgehoben */
+.rate-row--bold .rate-label {
+  color: var(--enpal-dark);
+  font-weight: 600;
+}
+
+.rate-row--bold .rate-value {
+  font-size: 14px;
+}
+
+/* === Rechte Spalte: Beträge EUR === */
+
+.eur-row {
+  padding: 8px 10px;
   border-radius: 8px;
-  text-align: center;
+  margin-bottom: 8px;
+  background: var(--enpal-light-bg);
 }
 
-.ergebnis-item.highlight {
+.eur-row:last-child {
+  margin-bottom: 0;
+}
+
+.eur-label {
+  display: block;
+  font-size: 12px;
+  color: var(--enpal-text-light);
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.eur-value {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--enpal-dark);
+}
+
+.eur-row--final {
   background: #FFF8E7;
 }
 
-.ergebnis-item:last-child {
-  grid-column: 1 / -1;
-}
-
-.ergebnis-label {
-  display: block;
-  font-size: 13px;
-  color: var(--enpal-text-light);
-  margin-bottom: 4px;
-  font-weight: 500;
-}
-
-.ergebnis-value {
-  display: block;
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--enpal-dark);
+.eur-value--final {
+  color: var(--enpal-amber);
+  font-size: 22px;
 }
 
 /* === Footer === */

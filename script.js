@@ -24,36 +24,76 @@ function formatEuro(value) {
   }).format(value);
 }
 
+// === Format percent ===
+function formatPct(value) {
+  return value + ' %';
+}
+
 // === KFW Förderberechnung ===
-// TODO: Echte KFW-Formel hier einsetzen!
-// Aktuell: Platzhalter-Logik
 function berechneKfwFoerderung(eingaben) {
-  let foerdersatz = 0;
+  const { hausAlt, eigentuemer, einkommenUnter40k, heizungstyp, heizungAlt } = eingaben;
 
-  // --- PLATZHALTER-FORMEL (durch echte ersetzen) ---
-  // Basis: 30% wenn Eigentümer + Haus > 5 Jahre
-  if (eingaben.eigentuemer && eingaben.hausAlt) {
-    foerdersatz = 30;
+  // 1. Grundförderung: 30 % wenn Haus älter als 5 Jahre
+  const grundfoerderung = hausAlt ? 30 : 0;
+
+  // 3. Effizienzbonus: 5 % wenn Haus älter als 5 Jahre
+  const effizienzbonus = hausAlt ? 5 : 0;
+
+  // 2. Einkommensbonus: 30 % wenn Haus >5J + selbstnutzender Eigentümer + Einkommen <40k
+  const einkommensbonus = (hausAlt && eigentuemer && einkommenUnter40k) ? 30 : 0;
+
+  // 4. Klimageschwindigkeitsbonus
+  let klimabonus = 0;
+  if (heizungstyp === 'waermepumpe') {
+    // a) Bestandsheizung ist Wärmepumpe → 0 %
+    klimabonus = 0;
+  } else if (eigentuemer && hausAlt && ['oel', 'kohle', 'nachtspeicher'].includes(heizungstyp)) {
+    // b) Eigentümer + Haus >5J + Öl / Kohle / Nachtspeicher → 20 %
+    klimabonus = 20;
+  } else if (eigentuemer && hausAlt && heizungAlt && ['gas', 'biomasse'].includes(heizungstyp)) {
+    // c) Eigentümer + Haus >5J + Heizung >20J + Gas / Biomasse → 20 %
+    klimabonus = 20;
   }
 
-  // Bonus: +20% wenn Heizung > 20 Jahre (Öl oder Gas)
-  if (eingaben.heizungAlt && eingaben.heizungstyp) {
-    foerdersatz += 20;
-  }
+  // Fördersatz selbstgenutzte WE: alle Boni, max. 70 %
+  const foerdersatzSelbst = Math.min(grundfoerderung + effizienzbonus + klimabonus + einkommensbonus, 70);
 
-  // Einkommensbonus: +30% wenn unter 40k
-  if (eingaben.einkommenUnter40k) {
-    foerdersatz += 30;
-  }
+  // Fördersatz weitere WE: nur Grundförderung + Effizienzbonus (persönliche Boni entfallen)
+  const foerdersatzWeitere = Math.min(grundfoerderung + effizienzbonus, 70);
 
-  // Cap bei 70%
-  foerdersatz = Math.min(foerdersatz, 70);
-  // --- ENDE PLATZHALTER ---
+  // Förderfähige Höchstkosten (KFW 458)
+  const MAX_SELBST  = 30000; // selbstgenutzte WE
+  const MAX_WEITERE = 15000; // jede weitere WE
 
-  const foerdersumme = Math.round(eingaben.preisBrutto * (foerdersatz / 100));
-  const preisNachFoerderung = eingaben.preisBrutto - foerdersumme;
+  const selbstAnzahl  = eigentuemer ? 1 : 0;
+  const weitereAnzahl = Math.max(0, eingaben.wohneinheiten - selbstAnzahl);
 
-  return { foerdersatz, foerdersumme, preisNachFoerderung };
+  const foerderbareKostenSelbst  = selbstAnzahl  * MAX_SELBST;
+  const foerderbareKostenWeitere = weitereAnzahl * MAX_WEITERE;
+
+  const foerdersumme =
+    Math.min(eingaben.preisBrutto, foerderbareKostenSelbst) * (foerdersatzSelbst / 100) +
+    Math.min(Math.max(0, eingaben.preisBrutto - foerderbareKostenSelbst), foerderbareKostenWeitere) * (foerdersatzWeitere / 100);
+
+  const foerdersummeRounded = Math.round(foerdersumme);
+
+  const effektiverFoerdersatz = eingaben.preisBrutto > 0
+    ? Math.round((foerdersummeRounded / eingaben.preisBrutto) * 100)
+    : 0;
+
+  const neuerPreis = eingaben.preisBrutto - foerdersummeRounded;
+
+  return {
+    grundfoerderung,
+    effizienzbonus,
+    klimabonus,
+    einkommensbonus,
+    foerdersatzSelbst,
+    foerdersatzWeitere,
+    effektiverFoerdersatz,
+    foerdersumme: foerdersummeRounded,
+    neuerPreis
+  };
 }
 
 // === Form Submit ===
@@ -61,26 +101,26 @@ document.getElementById('foerder-form').addEventListener('submit', function (e) 
   e.preventDefault();
 
   const eingaben = {
-    preisBrutto: parseFloat(document.getElementById('preis').value) || 0,
-    wohneinheiten: parseInt(document.getElementById('wohneinheiten').value) || 1,
-    eigentuemer: getToggleValue('eigentuemer'),
-    hausAlt: getToggleValue('haus-alt'),
-    heizungstyp: document.getElementById('heizungstyp').value,
-    heizungAlt: getToggleValue('heizung-alt'),
+    preisBrutto:       parseFloat(document.getElementById('preis').value) || 0,
+    wohneinheiten:     parseInt(document.getElementById('wohneinheiten').value) || 1,
+    eigentuemer:       getToggleValue('eigentuemer'),
+    hausAlt:           getToggleValue('haus-alt'),
+    heizungstyp:       document.getElementById('heizungstyp').value,
+    heizungAlt:        getToggleValue('heizung-alt'),
     einkommenUnter40k: getToggleValue('einkommen-unter-40k')
   };
 
-  if (!eingaben.preisBrutto || !eingaben.heizungstyp) {
-    return;
-  }
+  if (!eingaben.preisBrutto || !eingaben.heizungstyp) return;
 
-  const ergebnis = berechneKfwFoerderung(eingaben);
+  const r = berechneKfwFoerderung(eingaben);
 
-  document.getElementById('foerdersumme').textContent = formatEuro(ergebnis.foerdersumme);
-  document.getElementById('foerdersatz').textContent = ergebnis.foerdersatz + ' %';
-  document.getElementById('preis-nach-foerderung').textContent = formatEuro(ergebnis.preisNachFoerderung);
-
-  const card = document.getElementById('ergebnis');
-  card.classList.remove('hidden');
-  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.getElementById('t-grundfoerderung').textContent     = formatPct(r.grundfoerderung);
+  document.getElementById('t-effizienzbonus').textContent      = formatPct(r.effizienzbonus);
+  document.getElementById('t-klimabonus').textContent          = formatPct(r.klimabonus);
+  document.getElementById('t-einkommensbonus').textContent     = formatPct(r.einkommensbonus);
+  document.getElementById('t-foerdersatz-selbst').textContent  = formatPct(r.foerdersatzSelbst);
+  document.getElementById('t-foerdersatz-weitere').textContent = formatPct(r.foerdersatzWeitere);
+  document.getElementById('t-effektiv').textContent            = formatPct(r.effektiverFoerdersatz);
+  document.getElementById('t-foerdersumme').textContent        = formatEuro(r.foerdersumme);
+  document.getElementById('t-neuer-preis').textContent         = formatEuro(r.neuerPreis);
 });

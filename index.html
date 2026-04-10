@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KFW Förderrechner — Enpal</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
   <div class="container">
@@ -20,7 +20,7 @@
 
       <form id="foerder-form" class="form-card" autocomplete="off">
         <div class="form-group">
-          <label for="preis">Preis (Brutto)</label>
+          <label for="preis">Preis nach Discount</label>
           <div class="input-with-unit">
             <input type="number" id="preis" min="0" step="100" placeholder="z.B. 30000" required>
             <span class="unit">€</span>
@@ -51,11 +51,15 @@
         </div>
 
         <div class="form-group">
-          <label for="heizungstyp">Heizungstyp</label>
+          <label for="heizungstyp">Bestandsheizung</label>
           <select id="heizungstyp" required>
             <option value="">Bitte wählen</option>
             <option value="oel">Öl</option>
             <option value="gas">Gas</option>
+            <option value="kohle">Kohle</option>
+            <option value="waermepumpe">Wärmepumpe</option>
+            <option value="nachtspeicher">Nachtspeicherheizung</option>
+            <option value="biomasse">Biomasse</option>
           </select>
         </div>
 
@@ -80,21 +84,61 @@
         <button type="submit" class="btn-berechnen">Förderung berechnen</button>
       </form>
 
-      <div id="ergebnis" class="ergebnis-card hidden">
-        <h2>Ihr Förderergebnis</h2>
-        <div class="ergebnis-grid">
-          <div class="ergebnis-item highlight">
-            <span class="ergebnis-label">Fördersumme</span>
-            <span class="ergebnis-value" id="foerdersumme">—</span>
+      <div id="ergebnis" class="ergebnis-card">
+        <h2>Förderübersicht</h2>
+        <div class="ergebnis-columns">
+
+          <!-- Linke Spalte: Fördersätze in % -->
+          <div class="col-pct">
+            <div class="col-header">Fördersätze</div>
+
+            <div class="rate-row">
+              <span class="rate-label">Grundförderung</span>
+              <span id="t-grundfoerderung" class="rate-value"></span>
+            </div>
+            <div class="rate-row">
+              <span class="rate-label">Effizienzbonus</span>
+              <span id="t-effizienzbonus" class="rate-value"></span>
+            </div>
+            <div class="rate-row">
+              <span class="rate-label">Klimageschwindigkeitsbonus</span>
+              <span id="t-klimabonus" class="rate-value"></span>
+            </div>
+            <div class="rate-row">
+              <span class="rate-label">Einkommensbonus</span>
+              <span id="t-einkommensbonus" class="rate-value"></span>
+            </div>
+
+            <div class="col-divider"></div>
+
+            <div class="rate-row">
+              <span class="rate-label">Fördersatz selbstgenutzter WE</span>
+              <span id="t-foerdersatz-selbst" class="rate-value"></span>
+            </div>
+            <div class="rate-row">
+              <span class="rate-label">Fördersatz weitere Wohneinheiten</span>
+              <span id="t-foerdersatz-weitere" class="rate-value"></span>
+            </div>
+            <div class="rate-row rate-row--bold">
+              <span class="rate-label">Effektiver Fördersatz</span>
+              <span id="t-effektiv" class="rate-value"></span>
+            </div>
           </div>
-          <div class="ergebnis-item">
-            <span class="ergebnis-label">Fördersatz</span>
-            <span class="ergebnis-value" id="foerdersatz">—</span>
+
+          <!-- Rechte Spalte: Beträge in EUR -->
+          <div class="col-eur">
+            <div class="col-header">Beträge</div>
+
+            <div class="eur-row">
+              <span class="eur-label">Fördersumme</span>
+              <span id="t-foerdersumme" class="eur-value"></span>
+            </div>
+            <div class="eur-row eur-row--final">
+              <span class="eur-label">Neuer Wärmepumpenpreis</span>
+              <span id="t-neuer-preis" class="eur-value eur-value--final"></span>
+            </div>
           </div>
-          <div class="ergebnis-item highlight">
-            <span class="ergebnis-label">Preis nach Förderung</span>
-            <span class="ergebnis-value" id="preis-nach-foerderung">—</span>
-          </div>
+
         </div>
       </div>
     </main>
@@ -104,6 +148,6 @@
     </footer>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=3"></script>
 </body>
 </html>
