@@ -19,8 +19,8 @@ function formatEuro(value) {
   return new Intl.NumberFormat('de-DE', {
     style: 'currency',
     currency: 'EUR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   }).format(value);
 }
 
@@ -96,10 +96,8 @@ function berechneKfwFoerderung(eingaben) {
   };
 }
 
-// === Form Submit ===
-document.getElementById('foerder-form').addEventListener('submit', function (e) {
-  e.preventDefault();
-
+// === Ergebnis anzeigen ===
+function aktualisiereErgebnis() {
   const eingaben = {
     preisBrutto:       parseFloat(document.getElementById('preis').value) || 0,
     wohneinheiten:     parseInt(document.getElementById('wohneinheiten').value) || 1,
@@ -123,4 +121,21 @@ document.getElementById('foerder-form').addEventListener('submit', function (e) 
   document.getElementById('t-effektiv').textContent            = formatPct(r.effektiverFoerdersatz);
   document.getElementById('t-foerdersumme').textContent        = formatEuro(r.foerdersumme);
   document.getElementById('t-neuer-preis').textContent         = formatEuro(r.neuerPreis);
+}
+
+// === Live-Update bei jeder Eingabe ===
+document.getElementById('preis').addEventListener('input', aktualisiereErgebnis);
+document.getElementById('wohneinheiten').addEventListener('input', aktualisiereErgebnis);
+document.getElementById('heizungstyp').addEventListener('change', aktualisiereErgebnis);
+
+document.querySelectorAll('.toggle-wrapper').forEach(wrapper => {
+  wrapper.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', aktualisiereErgebnis);
+  });
+});
+
+// === Form Submit (verhindert Seitenreload) ===
+document.getElementById('foerder-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  aktualisiereErgebnis();
 });
