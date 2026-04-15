@@ -374,9 +374,16 @@ select {
 /* === Footer === */
 .footer {
   margin-top: 32px;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   color: var(--enpal-text-light);
   font-size: 13px;
+}
+
+.footer-timestamp {
+  font-size: 11px;
+  color: #AAAAAA;
 }
 
 /* === Animation === */
