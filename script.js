@@ -158,26 +158,3 @@ document.getElementById('foerder-form').addEventListener('submit', function (e) 
   card.classList.add('card-updated');
   card.addEventListener('animationend', () => card.classList.remove('card-updated'), { once: true });
 });
-
-// === Footer-Timestamp aus GitHub laden (letzter Commit auf main) ===
-async function ladeLetzenCommitTimestamp() {
-  const el = document.querySelector('.footer-timestamp');
-  if (!el) return;
-  try {
-    const res = await fetch(
-      'https://api.github.com/repos/al3x030997/kfw-subsidy-calculator/commits/main',
-      { headers: { 'Accept': 'application/vnd.github+json' } }
-    );
-    if (!res.ok) throw new Error('GitHub API ' + res.status);
-    const data = await res.json();
-    const iso = data.commit && data.commit.author && data.commit.author.date;
-    if (!iso) throw new Error('Kein Commit-Datum');
-    const d = new Date(iso);
-    const datum = d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    const uhrzeit = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-    el.textContent = `Stand: ${datum}, ${uhrzeit} Uhr`;
-  } catch (err) {
-    console.warn('Konnte Commit-Timestamp nicht laden:', err);
-  }
-}
-ladeLetzenCommitTimestamp();
