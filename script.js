@@ -39,8 +39,8 @@ function berechneKfwFoerderung(eingaben) {
   // 3. Effizienzbonus: 5 % wenn Haus älter als 5 Jahre
   const effizienzbonus = hausAlt ? 5 : 0;
 
-  // 2. Einkommensbonus: 30 % wenn Haus >5J + selbstnutzender Eigentümer + Einkommen <40k + max. 2 WE
-  const einkommensbonus = (hausAlt && eigentuemer && einkommenUnter40k && eingaben.wohneinheiten <= 2) ? 30 : 0;
+  // 2. Einkommensbonus: 30 % wenn Haus >5J + selbstnutzender Eigentümer + Einkommen <40k
+  const einkommensbonus = (hausAlt && eigentuemer && einkommenUnter40k) ? 30 : 0;
 
   // 4. Klimageschwindigkeitsbonus
   // Grundbedingung für b) und c): selbstnutzender Eigentümer + Haus >5J + Heizung funktionstüchtig
@@ -66,8 +66,9 @@ function berechneKfwFoerderung(eingaben) {
   const MAX_SELBST  = 30000; // selbstgenutzte WE
   const MAX_WEITERE = 15000; // jede weitere WE
 
-  const selbstAnzahl  = eigentuemer ? 1 : 0;
-  const weitereAnzahl = Math.max(0, eingaben.wohneinheiten - selbstAnzahl);
+  // Erste WE bekommt immer 30k-Grenze, jede weitere 15k — unabhängig von Selbstnutzung
+  const selbstAnzahl  = eingaben.wohneinheiten >= 1 ? 1 : 0;
+  const weitereAnzahl = Math.max(0, eingaben.wohneinheiten - 1);
 
   const foerderbareKostenSelbst  = selbstAnzahl  * MAX_SELBST;
   const foerderbareKostenWeitere = weitereAnzahl * MAX_WEITERE;
