@@ -207,12 +207,36 @@ select {
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
   margin-top: 6px;
 }
 
 .btn-berechnen:hover {
   background: #253a5e;
+}
+
+.btn-berechnen:active {
+  transform: scale(0.98);
+}
+
+.btn-berechnen.btn-fired {
+  animation: btnPulse 0.4s ease-out;
+}
+
+@keyframes btnPulse {
+  0%   { background: var(--enpal-dark); transform: scale(0.98); }
+  40%  { background: var(--enpal-amber); transform: scale(1.01); }
+  100% { background: var(--enpal-dark); transform: scale(1); }
+}
+
+/* Ergebnis-Card Highlight bei Neuberechnung */
+.ergebnis-card.card-updated {
+  animation: cardFlash 0.5s ease-out;
+}
+
+@keyframes cardFlash {
+  0%   { border-color: var(--enpal-amber); box-shadow: 0 0 0 3px rgba(245,166,35,0.35); }
+  100% { border-color: var(--enpal-amber); box-shadow: none; }
 }
 
 /* === Ergebnis Card === */

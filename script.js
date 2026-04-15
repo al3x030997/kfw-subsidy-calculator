@@ -142,4 +142,18 @@ document.querySelectorAll('.toggle-wrapper').forEach(wrapper => {
 document.getElementById('foerder-form').addEventListener('submit', function (e) {
   e.preventDefault();
   aktualisiereErgebnis();
+
+  // Button-Puls-Effekt
+  const btn = document.querySelector('.btn-berechnen');
+  btn.classList.remove('btn-fired');
+  void btn.offsetWidth; // reflow zum Reset der Animation
+  btn.classList.add('btn-fired');
+  btn.addEventListener('animationend', () => btn.classList.remove('btn-fired'), { once: true });
+
+  // Ergebnis-Card Highlight
+  const card = document.getElementById('ergebnis');
+  card.classList.remove('card-updated');
+  void card.offsetWidth;
+  card.classList.add('card-updated');
+  card.addEventListener('animationend', () => card.classList.remove('card-updated'), { once: true });
 });
