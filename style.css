@@ -371,6 +371,92 @@ select {
   font-size: 22px;
 }
 
+/* === Section Divider zwischen Berechnung und Info === */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--enpal-gray) 20%, var(--enpal-gray) 80%, transparent);
+  margin: 32px 0 24px;
+}
+
+/* === Info-Card: Fördertypen im Überblick === */
+.info-card {
+  background: var(--enpal-white);
+  border-radius: var(--radius);
+  padding: 24px;
+  border: 1px solid var(--enpal-gray);
+}
+
+.info-card h2 {
+  font-size: 18px;
+  color: var(--enpal-dark);
+  margin-bottom: 18px;
+}
+
+.info-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.info-col-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--enpal-text-light);
+  margin-bottom: 12px;
+}
+
+.info-item {
+  margin-bottom: 14px;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-item-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--enpal-dark);
+  margin-bottom: 4px;
+}
+
+.info-pct {
+  color: var(--enpal-amber);
+  font-weight: 700;
+}
+
+.info-item p {
+  font-size: 13px;
+  color: var(--enpal-text-light);
+  line-height: 1.45;
+}
+
+.info-divider {
+  height: 1px;
+  background: var(--enpal-gray);
+  margin: 20px 0 16px;
+}
+
+.info-subtitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--enpal-dark);
+  margin-bottom: 8px;
+}
+
+.info-text {
+  font-size: 13px;
+  color: var(--enpal-text-light);
+  line-height: 1.5;
+}
+
+.info-text strong {
+  color: var(--enpal-dark);
+  font-weight: 700;
+}
+
 /* === Footer === */
 .footer {
   margin-top: 32px;
@@ -402,6 +488,11 @@ select {
 @media (max-width: 480px) {
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .info-columns {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .ergebnis-grid {
