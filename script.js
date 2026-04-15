@@ -91,6 +91,8 @@ function berechneKfwFoerderung(eingaben) {
     einkommensbonus,
     foerdersatzSelbst,
     foerdersatzWeitere,
+    selbstAnzahl,
+    weitereAnzahl,
     effektiverFoerdersatz,
     foerdersumme: foerdersummeRounded,
     neuerPreis
@@ -118,8 +120,8 @@ function aktualisiereErgebnis() {
   document.getElementById('t-effizienzbonus').textContent      = formatPct(r.effizienzbonus);
   document.getElementById('t-klimabonus').textContent          = formatPct(r.klimabonus);
   document.getElementById('t-einkommensbonus').textContent     = formatPct(r.einkommensbonus);
-  document.getElementById('t-foerdersatz-selbst').textContent  = formatPct(r.foerdersatzSelbst);
-  document.getElementById('t-foerdersatz-weitere').textContent = formatPct(r.foerdersatzWeitere);
+  document.getElementById('t-foerdersatz-selbst').textContent  = r.selbstAnzahl  > 0 ? formatPct(r.foerdersatzSelbst)  : '—';
+  document.getElementById('t-foerdersatz-weitere').textContent = r.weitereAnzahl > 0 ? formatPct(r.foerdersatzWeitere) : '—';
   document.getElementById('t-effektiv').textContent            = formatPct(r.effektiverFoerdersatz);
   document.getElementById('t-foerdersumme').textContent        = formatEuro(r.foerdersumme);
   document.getElementById('t-neuer-preis').textContent         = formatEuro(r.neuerPreis);
