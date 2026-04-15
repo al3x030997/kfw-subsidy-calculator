@@ -39,20 +39,20 @@ function berechneKfwFoerderung(eingaben) {
   // 3. Effizienzbonus: 5 % wenn Haus älter als 5 Jahre
   const effizienzbonus = hausAlt ? 5 : 0;
 
-  // 2. Einkommensbonus: 30 % wenn Haus >5J + selbstnutzender Eigentümer + Einkommen <40k
-  const einkommensbonus = (hausAlt && eigentuemer && einkommenUnter40k) ? 30 : 0;
+  // 2. Einkommensbonus: 30 % wenn Haus >5J + selbstnutzender Eigentümer + Einkommen <40k + max. 2 WE
+  const einkommensbonus = (hausAlt && eigentuemer && einkommenUnter40k && eingaben.wohneinheiten <= 2) ? 30 : 0;
 
   // 4. Klimageschwindigkeitsbonus
-  // Grundbedingung für b) und c): Heizung muss noch funktionstüchtig sein
+  // Grundbedingung: selbstnutzender Eigentümer + Haus >5J + Heizung funktionstüchtig
   let klimabonus = 0;
   if (heizungstyp === 'waermepumpe') {
     // a) Bestandsheizung ist Wärmepumpe → 0 %
     klimabonus = 0;
-  } else if (eigentuemer && hausAlt && heizungFunktioniert && ['oel', 'kohle', 'nachtspeicher'].includes(heizungstyp)) {
-    // b) Eigentümer + Haus >5J + funktionstüchtig + Öl / Kohle / Nachtspeicher → 20 %
+  } else if (eigentuemer && hausAlt && heizungFunktioniert && ['oel', 'kohle', 'gas', 'nachtspeicher'].includes(heizungstyp)) {
+    // b) Öl / Kohle / Gas / Nachtspeicher → kein Alterserfordernis → 20 %
     klimabonus = 20;
-  } else if (eigentuemer && hausAlt && heizungFunktioniert && heizungAlt && ['gas', 'biomasse'].includes(heizungstyp)) {
-    // c) Eigentümer + Haus >5J + funktionstüchtig + Heizung >20J + Gas / Biomasse → 20 %
+  } else if (eigentuemer && hausAlt && heizungFunktioniert && heizungAlt && heizungstyp === 'biomasse') {
+    // c) Biomasse → nur wenn Heizung >20 Jahre → 20 %
     klimabonus = 20;
   }
 
