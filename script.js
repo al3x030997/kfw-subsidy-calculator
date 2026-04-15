@@ -31,7 +31,7 @@ function formatPct(value) {
 
 // === KFW Förderberechnung ===
 function berechneKfwFoerderung(eingaben) {
-  const { hausAlt, eigentuemer, einkommenUnter40k, heizungstyp, heizungAlt } = eingaben;
+  const { hausAlt, eigentuemer, einkommenUnter40k, heizungstyp, heizungAlt, heizungFunktioniert } = eingaben;
 
   // 1. Grundförderung: 30 % wenn Haus älter als 5 Jahre
   const grundfoerderung = hausAlt ? 30 : 0;
@@ -43,15 +43,16 @@ function berechneKfwFoerderung(eingaben) {
   const einkommensbonus = (hausAlt && eigentuemer && einkommenUnter40k) ? 30 : 0;
 
   // 4. Klimageschwindigkeitsbonus
+  // Grundbedingung für b) und c): Heizung muss noch funktionstüchtig sein
   let klimabonus = 0;
   if (heizungstyp === 'waermepumpe') {
     // a) Bestandsheizung ist Wärmepumpe → 0 %
     klimabonus = 0;
-  } else if (eigentuemer && hausAlt && ['oel', 'kohle', 'nachtspeicher'].includes(heizungstyp)) {
-    // b) Eigentümer + Haus >5J + Öl / Kohle / Nachtspeicher → 20 %
+  } else if (eigentuemer && hausAlt && heizungFunktioniert && ['oel', 'kohle', 'nachtspeicher'].includes(heizungstyp)) {
+    // b) Eigentümer + Haus >5J + funktionstüchtig + Öl / Kohle / Nachtspeicher → 20 %
     klimabonus = 20;
-  } else if (eigentuemer && hausAlt && heizungAlt && ['gas', 'biomasse'].includes(heizungstyp)) {
-    // c) Eigentümer + Haus >5J + Heizung >20J + Gas / Biomasse → 20 %
+  } else if (eigentuemer && hausAlt && heizungFunktioniert && heizungAlt && ['gas', 'biomasse'].includes(heizungstyp)) {
+    // c) Eigentümer + Haus >5J + funktionstüchtig + Heizung >20J + Gas / Biomasse → 20 %
     klimabonus = 20;
   }
 
@@ -104,8 +105,9 @@ function aktualisiereErgebnis() {
     eigentuemer:       getToggleValue('eigentuemer'),
     hausAlt:           getToggleValue('haus-alt'),
     heizungstyp:       document.getElementById('heizungstyp').value,
-    heizungAlt:        getToggleValue('heizung-alt'),
-    einkommenUnter40k: getToggleValue('einkommen-unter-40k')
+    heizungAlt:           getToggleValue('heizung-alt'),
+    heizungFunktioniert:  getToggleValue('heizung-funktioniert'),
+    einkommenUnter40k:    getToggleValue('einkommen-unter-40k')
   };
 
   if (!eingaben.preisBrutto || !eingaben.heizungstyp) return;
